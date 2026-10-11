@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌿 GrassRoute | Zero-Signal Outdoor Quest & Trail Naturalist</title>
+  <meta name="description" content="Open-weight AI companion built to get you off the screen and into the woods. 100% offline, WebGPU inference, trail audio pacer, and zero-signal field guide.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+</head>
+<body>
+
+  <!-- Full-screen Pocket / Trail Sleep Mode (Screen-Off Mimic) -->
+  <div id="pocketModeScreen" class="pocket-mode hidden">
+    <div class="pocket-card">
+      <div class="pocket-leaf-pulse">🍃</div>
+      <h2>Pocket Mode Active</h2>
+      <p class="pocket-sub">Your screen is resting. Put your phone in your pocket.</p>
+      
+      <div class="pocket-timer">
+        <span id="pocketTimeRemaining">30:00</span>
+      </div>
+      <div class="pocket-stat">
+        <span id="pocketGrassRatio">100% Green Time</span>
+      </div>
+
+      <div class="pocket-mission-box">
+        <div id="pocketMissionSummary">Loading mission...</div>
+      </div>
+
+      <div class="pocket-instructions">
+        🔔 Gentle acoustic chimes will sound at halfway, 5-minute, and finish marks. No need to look at your device!
+      </div>
+
+      <button id="exitPocketBtn" class="btn btn-outline-light">End Session & Return</button>
+    </div>
+  </div>
+
+  <!-- Main Application Container -->
+  <div id="mainContainer" class="app-layout">
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon">🌿</div>
+        <div>
+          <h1>GrassRoute</h1>
+          <p class="tagline">The Zero-Signal Outdoor Companion & Trail Naturalist</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="model-picker-wrap">
+          <label for="modelSelect">Open Model:</label>
+          <select id="modelSelect" class="form-select">
+            <option value="Qwen2.5-0.5B-Instruct-q4f16_1-MLC">Qwen 2.5 (0.5B) - Ultra Fast</option>
+            <option value="Qwen2.5-1.5B-Instruct-q4f16_1-MLC" selected>Qwen 2.5 (1.5B) - Balanced</option>
+            <option value="Llama-3.2-1B-Instruct-q4f16_1-MLC">Llama 3.2 (1B) - High Quality</option>
+            <option value="SmolLM-360M-Instruct-q4f16_1-MLC">SmolLM (360M) - Ultra Light</option>
+          </select>
+          <button id="loadModelBtn" class="btn btn-sm btn-primary">Load Local AI</button>
+        </div>
+        <span id="modelBadge" class="badge badge-idle">Ready (Fast Deterministic Mode)</span>
+      </div>
+    </header>
+
+    <!-- Model Loading Bar & Status -->
+    <div class="model-bar-container">
+      <div id="modelProgress" class="model-progress-bar"></div>
+      <div id="modelStatus" class="model-status-text">
+        💡 Runs 100% on-device via WebGPU. Model stays cached in your browser. Turn off Wi-Fi & cellular—GrassRoute works in deep trails with zero signal.
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-bar">
+      <button id="questTabBtn" class="nav-tab active">🧭 Outdoor Quest</button>
+      <button id="fieldGuideTabBtn" class="nav-tab">🍂 Field Guide</button>
+      <button id="frostTabBtn" class="nav-tab">🌱 Frost & Garden</button>
+      <button id="naturalistTabBtn" class="nav-tab">🧠 Offline Naturalist</button>
+      <button id="journalTabBtn" class="nav-tab">📓 Field Journal</button>
+    </nav>
+
+    <!-- TAB 1: OUTDOOR QUEST -->
+    <main id="questTab" class="tab-content">
+      <section class="section-card hero-section">
+        <div class="hero-text">
+          <h2>30 Seconds on Screen, 60 Minutes in Nature</h2>
+          <p>
+            GrassRoute is built to <em>shorten</em> screen time, not prolong it. Pick your outdoor activity, get a sensory micro-mission, tap <strong>Touch Grass</strong>, and slip your phone into your pocket.
+          </p>
+        </div>
+
+        <div class="quest-form-grid">
+          <div class="form-group">
+            <label for="questActivity">Activity & Setting:</label>
+            <select id="questActivity" class="form-input">
+              <option value="hike" selected>🥾 Forest Trail / Nature Hike</option>
+              <option value="run">🏃 Autumn Run Club / Foliage Jog</option>
+              <option value="garden">🌱 Backyard Garden & Planting</option>
+              <option value="birding">🦜 Birding & Wildlife Walk</option>
+              <option value="mindful">🧘 Mindful Sensory Grounding</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="questDuration">Time Budget:</label>
+            <select id="questDuration" class="form-input">
+              <option value="15">15 Minutes (Quick Break)</option>
+              <option value="30" selected>30 Minutes (Standard Walk)</option>
+              <option value="45">45 Minutes (Deep Trail)</option>
+              <option value="60">60 Minutes (Long Explorer)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="questCompanion">Who's Joining:</label>
+            <select id="questCompanion" class="form-input">
+              <option value="Solo" selected>Solo (Quiet Reflection)</option>
+              <option value="With Dog">With Dog (Sniff Safari)</option>
+              <option value="With Friends / Run Club">With Friends / Run Club</option>
+              <option value="With Kids">With Kids (Nature Scavenger)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="questNotes">Location Clues (Optional):</label>
+            <input type="text" id="questNotes" class="form-input" placeholder="e.g. City park with lake, Pine woods, Rocky creek...">
+          </div>
+        </div>
+
+        <div class="form-row-center">
+          <label class="toggle-wrap">
+            <input type="checkbox" id="voiceCuesToggle" checked>
+            <span>Read Mission Aloud via Audio Cues (Zero screen reading needed)</span>
+          </label>
+        </div>
+
+        <div class="action-buttons">
+          <button id="generateQuestBtn" class="btn btn-lg btn-success">✨ Generate Outdoor Mission</button>
+        </div>
+
+        <div id="questOutput" class="quest-card hidden"></div>
+
+        <div class="action-buttons">
+          <button id="startPocketBtn" class="btn btn-lg btn-accent hidden">🌿 Touch Grass (Start Pocket Mode)</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- TAB 2: FIELD GUIDE -->
+    <section id="fieldGuideTab" class="tab-content hidden">
+      <div class="section-card">
+        <h2>Zero-Signal Field Guide</h2>
+        <p>Curated offline botanical, tree, and ornithological database. Instant lookup with 0ms latency in airplane mode.</p>
+
+        <div class="search-wrap">
+          <input type="text" id="fieldSearchInput" class="form-input" placeholder="🔍 Search trees, bird calls, leaves, colors, or safety warnings (e.g. maple, chickadee, sumac, poison ivy)...">
+        </div>
+        <div id="searchResultsBox" class="search-results-box hidden"></div>
+
+        <h3 class="catalog-title">🍂 Autumn Trees & Fall Foliage Radar</h3>
+        <p class="catalog-desc">Understand leaf chemistry: anthocyanins (reds), carotenoids (golds), and tannins (bronze oaks).</p>
+        <div id="foliageList" class="catalog-grid"></div>
+
+        <h3 class="catalog-title">🦜 Trail Bird Calls & Mnemonic Audio</h3>
+        <p class="catalog-desc">Identify common autumn forest callers without sound file downloads using phonetic mnemonics.</p>
+        <div id="birdList" class="catalog-grid"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: FROST & GARDEN -->
+    <section id="frostTab" class="tab-content hidden">
+      <div class="section-card">
+        <h2>Seasonal Frost & Garden Planner</h2>
+        <p>Tells you exactly what to plant and harvest this week based on your regional frost dates.</p>
+
+        <div class="frost-control-row">
+          <div class="form-group inline-group">
+            <label for="frostZoneSelect">Select Your USDA/Climate Zone:</label>
+            <select id="frostZoneSelect" class="form-input">
+              <option value="3">Zone 3 (Cold Northern - First frost ~Mid Sept)</option>
+              <option value="4">Zone 4 (North Central - First frost ~Late Sept)</option>
+              <option value="5">Zone 5 (Midwest / New England - First frost ~Mid Oct)</option>
+              <option value="6" selected>Zone 6 (Mid-Atlantic / Lower Midwest - First frost ~Late Oct)</option>
+              <option value="7">Zone 7 (Transition Zone - First frost ~Early Nov)</option>
+              <option value="8">Zone 8 (South / Pacific Coast - First frost ~Late Nov)</option>
+              <option value="9">Zone 9 (Subtropical - First frost ~Mid Dec)</option>
+            </select>
+          </div>
+          <button id="calcFrostBtn" class="btn btn-primary">Check Frost Status</button>
+        </div>
+
+        <div id="frostResultBox" class="frost-output-container hidden"></div>
+
+        <h3 class="catalog-title">🌱 Autumn Planting Guide (October Window)</h3>
+        <div id="gardenList" class="catalog-grid"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: OFFLINE NATURALIST (Q&A) -->
+    <section id="naturalistTab" class="tab-content hidden">
+      <div class="section-card">
+        <h2>Ask the Offline Naturalist</h2>
+        <p>Have an outdoor question while 5 miles into the woods with no cell reception? Ask our on-device open-weight AI naturalist.</p>
+
+        <div class="quick-chips">
+          <span>Quick questions:</span>
+          <button class="quick-q-chip">Why do sugar maple leaves turn red?</button>
+          <button class="quick-q-chip">What bird sounds like 'fee-bee'?</button>
+          <button class="quick-q-chip">How do I tell staghorn sumac from poison sumac?</button>
+          <button class="quick-q-chip">Can I plant garlic after the first frost?</button>
+          <button class="quick-q-chip">What is marcescence in oak and beech trees?</button>
+        </div>
+
+        <div class="q-form">
+          <textarea id="naturalistQuestion" class="form-input" rows="3" placeholder="Ask anything about plants, bird behavior, soil, trail safety, or autumn foliage..."></textarea>
+          <button id="askNaturalistBtn" class="btn btn-success">Ask Naturalist (Local GPU / Field Index)</button>
+        </div>
+
+        <div id="naturalistReply" class="naturalist-reply-box hidden"></div>
+      </div>
+    </section>
+
+    <!-- TAB 5: FIELD JOURNAL -->
+    <section id="journalTab" class="tab-content hidden">
+      <div class="section-card">
+        <div class="journal-header">
+          <div>
+            <h2>Your Outdoor Field Journal</h2>
+            <p>Every minute spent touching grass is recorded locally. Zero cloud tracking, zero data selling.</p>
+          </div>
+          <div class="journal-stats">
+            <div class="stat-badge">
+              <span class="stat-number" id="totalGrassMinutes">0 mins</span>
+              <span class="stat-label">Green Time</span>
+            </div>
+            <div class="stat-badge">
+              <span class="stat-number" id="totalSessionCount">0</span>
+              <span class="stat-label">Quests</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="journal-actions">
+          <button id="exportJournalBtn" class="btn btn-sm btn-outline">📥 Export Field Notes (.md)</button>
+          <button id="clearJournalBtn" class="btn btn-sm btn-danger-outline">🗑️ Clear Journal</button>
+        </div>
+
+        <div id="journalEntries" class="journal-list"></div>
+      </div>
+    </section>
+
+    <footer class="app-footer">
+      <p>
+        🌿 <strong>GrassRoute</strong> — Built for the <a href="https://dev.to/challenges/hacktoberfest-week1-2026-10-05" target="_blank" rel="noopener">Hacktoberfest Open-Source AI Challenge: Week 1 (Touch Grass)</a>.
+      </p>
+      <p>
+        Powered by open-weight models via <a href="https://github.com/mlc-ai/web-llm" target="_blank" rel="noopener">WebLLM</a> & WebGPU. 100% offline, client-side, zero tracking.
+      </p>
+      <p>
+        <span class="render-badge">Ready for Render Deploy</span> | MIT License
+      </p>
+    </footer>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

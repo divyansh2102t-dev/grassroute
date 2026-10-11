@@ -1,0 +1,25 @@
+{
+  "name": "grassroute",
+  "version": "1.0.0",
+  "description": "The Zero-Signal Outdoor Quest & Trail Naturalist powered by open-weight AI.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "hacktoberfest",
+    "touch-grass",
+    "open-weight-ai",
+    "webllm",
+    "webgpu",
+    "offline-first",
+    "render",
+    "hiking",
+    "foliage",
+    "birding"
+  ],
+  "author": "divyansh2102t-dev",
+  "license": "MIT"
+}
