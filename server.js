@@ -54,6 +54,16 @@ const server = http.createServer((req, res) => {
   });
 });
 
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    const nextPort = Number(PORT) + 1;
+    console.warn(`Port ${PORT} in use, trying http://localhost:${nextPort}...`);
+    server.listen(nextPort);
+  } else {
+    console.error(err);
+  }
+});
+
 server.listen(PORT, () => {
   console.log(`🌿 GrassRoute running on http://localhost:${PORT}`);
 });
