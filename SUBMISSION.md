@@ -95,9 +95,7 @@ Building for the outdoors brings the reality of proprietary cloud AI into sharp 
 
 ## My Agent Session
 
-This project was paired and designed using Google Antigravity and DevRelay:
-
-{% agent_session 90de5857-0638-4e29-af78-d41ec9b97fb6 %}
+This project was built from scratch in pair-programming with **Google Antigravity (Gemini)**. The agent helped architect the offline WebLLM pipeline, formulate the zero-signal deterministic field guide algorithms, build the Web Audio synthesizer chimes, and configure the Render deployment blueprint.
 
 ---
 
